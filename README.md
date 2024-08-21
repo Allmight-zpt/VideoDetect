@@ -9,7 +9,7 @@
 - 分类模型
 - 。。。。
 ### 效果
-![test.png](assets%2Ftest.png)
+![img.png](assets%2Fimg.png)
 ### 快速使用
 - 运行main文件
 - 。。。。

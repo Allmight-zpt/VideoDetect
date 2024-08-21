@@ -3,7 +3,6 @@ from test_classifier import predict_image_cv2, load_model
 
 # 1.获取视频对象
 cap = cv.VideoCapture(r'.\正确的制样视频_scale.mp4')
-# cap = cv.VideoCapture(r'D:\file\个人资料\科研\横向\制样视频20240715\不正确1.mp4')
 # 获取视频的总帧数
 total_frames = int(cap.get(cv.CAP_PROP_FRAME_COUNT))
 # 设置缩放比例
@@ -11,6 +10,9 @@ scale_percent = 20  # 例如，将视频帧缩小到原始尺寸的50%
 
 # 设置开始帧
 start_frame = 1
+if start_frame > total_frames:
+    print("start frame is large than total frames")
+    exit()
 cap.set(cv.CAP_PROP_POS_FRAMES, start_frame)
 
 # 读取模型
@@ -87,9 +89,13 @@ while (cap.isOpened()):
                     # 四分
                     elif predict_class == 2:
                         result['Quartered']['color'] = green
+                        result['Quartered']['status'] = True
+
                     # 对角
                     elif predict_class == 4 & result['Quartered']['status']:
                         result['Diagonal']['color'] = green
+                        result['Diagonal']['status'] = True
+
             else:
                 counter[counter['last_frame']] = 0
                 counter['last_frame'] = predict_class
