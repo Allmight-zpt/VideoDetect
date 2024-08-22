@@ -2,11 +2,11 @@ import cv2 as cv
 from test_classifier import predict_image_cv2, load_model
 
 # 1.获取视频对象
-cap = cv.VideoCapture(r'.\正确的制样视频_scale.mp4')
+cap = cv.VideoCapture(r'.\正确完整操作_1500_4000_1920_1080_scale.mp4')
 # 获取视频的总帧数
 total_frames = int(cap.get(cv.CAP_PROP_FRAME_COUNT))
 # 设置缩放比例
-scale_percent = 20  # 例如，将视频帧缩小到原始尺寸的50%
+scale_percent = 50  # 例如，将视频帧缩小到原始尺寸的50%
 
 # 设置开始帧
 start_frame = 1
@@ -16,7 +16,8 @@ if start_frame > total_frames:
 cap.set(cv.CAP_PROP_POS_FRAMES, start_frame)
 
 # 读取模型
-model = load_model('5class.pth', 5)
+num_classes = 7
+model = load_model(str(num_classes) + 'class.pth', num_classes)
 
 # 文字颜色
 red = (0, 0, 255)
@@ -29,6 +30,7 @@ result = {
     'Quartered': {'status': False, 'color': red},
     'Diagonal': {'status': False, 'color': red},
     'Quartered & Diagonal times': {'status': 0, 'color': red, 'flag': True},
+    'Sieving': {'status': False, 'color': red},
 }
 
 # 检测结果
@@ -38,6 +40,8 @@ predict_dict = {
     2: "Quartered",
     3: "Three",
     4: "Two & Diagonal",
+    5: "Into Sieve",
+    6: "Sieving",
 }
 
 # 计数器
@@ -48,6 +52,8 @@ counter = {
     2: 0,
     3: 0,
     4: 0,
+    5: 0,
+    6: 0,
 }
 
 # 2.判断是否读取成功
@@ -78,7 +84,7 @@ while (cap.isOpened()):
                 # 连续10帧才算有效
                 if counter[predict_class] == 10:
                     # 重置
-                    if predict_class == 0:
+                    if (predict_class == 0) & (result['Diagonal']['status']):
                         result['Quartered']['status'] = False
                         result['Quartered']['color'] = red
                         result['Diagonal']['status'] = False
@@ -87,14 +93,19 @@ while (cap.isOpened()):
                         result['Mixing duration']['color'] = red
                         result['Quartered & Diagonal times']['flag'] = True
                     # 四分
-                    elif predict_class == 2:
+                    elif (predict_class == 2) & (result['Mixing duration']['color'] == green):
                         result['Quartered']['color'] = green
                         result['Quartered']['status'] = True
 
                     # 对角
-                    elif predict_class == 4 & result['Quartered']['status']:
+                    elif (predict_class == 4) & result['Quartered']['status']:
                         result['Diagonal']['color'] = green
                         result['Diagonal']['status'] = True
+
+                    # 过筛
+                    elif predict_class == 6:
+                        result['Sieving']['color'] = green
+                        result['Sieving']['status'] = True
 
             else:
                 counter[counter['last_frame']] = 0

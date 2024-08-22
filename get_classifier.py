@@ -11,7 +11,8 @@ train_dataset = datasets.ImageFolder(root='./train_data', transform=transform)
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 
 # 实例化模型
-model = SimpleCNN(num_classes=5)
+num_classes = 7
+model = SimpleCNN(num_classes=num_classes)
 
 # 使用GPU进行训练（如果可用）
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -45,5 +46,5 @@ for epoch in range(num_epochs):
 print('Training complete.')
 
 # 保存模型
-torch.save(model.state_dict(), '5class.pth')
+torch.save(model.state_dict(), str(num_classes) + 'class.pth')
 print('Model saved as simple_cnn.pth')
