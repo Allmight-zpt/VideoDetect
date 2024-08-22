@@ -1,11 +1,18 @@
 import cv2
 import os
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--video_path', type=str, default=r'.\正确的制样视频_scale.mp4')
+parser.add_argument('--output_folder', type=str, default='raw_data')
+
+args = parser.parse_args()
 
 # 视频文件路径
-video_path = r'.\正确的制样视频_scale.mp4'
-
+video_path = args.video_path
 # 保存帧的文件夹路径
-output_folder = 'raw_data'
+output_folder = args.output_folder
+
 os.makedirs(output_folder, exist_ok=True)
 
 # 打开视频文件
